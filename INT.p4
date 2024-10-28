@@ -35,7 +35,7 @@ header ipv4_t {
 }
 
 struct metadata {
-    /* empty */
+    bit<
 }
 
 header TCP_t{
@@ -89,7 +89,7 @@ struct headers {
 *********************** P A R S E R  ***********************************
 *************************************************************************/
 
-parser MyParser(packet_in packet,
+parser IngressParser(packet_in packet,
                 out headers hdr,
                 inout metadata meta,
                 inout standard_metadata_t standard_metadata) {
@@ -187,7 +187,9 @@ control MyIngress(inout headers hdr,
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-    apply {  }
+
+
+	apply {  }
 }
 
 /*************************************************************************
