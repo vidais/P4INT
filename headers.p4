@@ -1,12 +1,14 @@
 #ifndef _HEADERS_P4_
 #define _HEADERS_P4_
 
+//Header for Ethernet
 header ethernet_t{
     bit<48> dstAddr;
     bit<48> srcAddr;
     bit<16> etherType;
 }
 
+//Header for IPv4
 header ipv4_t{
     bit<4>  version;
     bit<4>  ihl;
@@ -23,6 +25,7 @@ header ipv4_t{
     bit<32> dstAddr;
 }
 
+//Header for UDP
 header udp_t {
     bit<16> srcPort;
     bit<16> dstPort;
@@ -30,6 +33,7 @@ header udp_t {
     bit<16> csum;
 }
 
+//Header for TCP
 header tcp_t {
     bit<16> srcPort;
     bit<16> dstPort;
@@ -43,6 +47,7 @@ header tcp_t {
     bit<16> urgPoint;
 }
 
+//Local Node INT metadata
 struct int_metadata_t {
     bit<1>  source;    // is INT source functionality enabled
     bit<1>  sink;        // is INT sink functionality enabled
@@ -60,7 +65,8 @@ const bit<6> IPv4_DSCP_INT = 0x20;   // indicates an INT header in the packet
 const bit<16> INT_SHIM_HEADER_LEN_BYTES = 4;
 const bit<8> INT_TYPE_HOP_BY_HOP = 1;
 
-header intl4_shim_t {
+//INT Shim Header
+header int_shim_t {
     bit<8> int_type;
     bit<8> rsvd1;
     bit<8> len;    // the length of all INT headers in 4-byte words
@@ -71,6 +77,7 @@ header intl4_shim_t {
 const bit<16> INT_HEADER_LEN_BYTES = 8;
 const bit<4> INT_VERSION = 1;
 
+//Fixed Length INT header
 header int_header_t {
     bit<4>  ver;
     bit<2>  rep;
@@ -87,37 +94,45 @@ header int_header_t {
 
 const bit<16> INT_ALL_HEADER_LEN_BYTES = INT_SHIM_HEADER_LEN_BYTES + INT_HEADER_LEN_BYTES;
 
+//Header for Switch ID
 header int_switch_id_t {
     bit<32> switch_id;
 }
 
+//Dont know
 header int_port_ids_t {
     bit<16> ingress_port_id;
     bit<16> egress_port_id;
 }
 
+//Time spent inside the switch?
 header int_hop_latency_t {
     bit<32> hop_latency;
 }
 
+//Queue Occupancy
 header int_q_occupancy_t {
     bit<8>  q_id;
     bit<24> q_occupancy;
 }
 
+//Ingress Timestamp
 header int_ingress_tstamp_t {
     bit<64> ingress_tstamp;
 }
 
+//Egress Timestamp
 header int_egress_tstamp_t {
     bit<64> egress_tstamp;
 }
 
+//Don't know
 header int_level2_port_ids_t {
     bit<16> ingress_port_id;
     bit<16> egress_port_id;
 }
 
+//Don't Know
 header int_egress_port_tx_util_t {
     bit<32> egress_port_tx_util;
 }
@@ -125,6 +140,7 @@ header int_egress_port_tx_util_t {
 const bit<4> INT_REPORT_HEADER_LEN_WORDS = 4;
 const bit<4> INT_REPORT_VERSION = 1;
 
+//Headers for the report
 header int_report_fixed_header_t {
     bit<4> ver;
     bit<4> len;
@@ -141,6 +157,7 @@ header int_report_fixed_header_t {
     bit<32> ingress_tstamp;
 }
 
+//Metadata
 struct int_metadata_t {
     bit<1>  source;    // is INT source functionality enabled
     bit<1>  sink;        // is INT sink functionality enabled
@@ -151,4 +168,43 @@ struct int_metadata_t {
     bit<16> sink_reporting_port;    // on which port INT reports must be send to INT collector
     bit<64> ingress_tstamp;   // pass ingress timestamp from Ingress pipeline to Egress pipeline
     bit<16> ingress_port;  // pass ingress port from Ingress pipeline to Egress pipeline 
+}
+
+//Variable header for the values of the previous nodes
+header int_data_t {
+    // Enough room for previous 4 nodes worth of data
+    varbit<1600> data;
+}
+
+
+struct headers {
+    //INT Report Headers
+    ethernet_t report_ethernet;
+    ipv4_t report_ipv4;
+    udp_t report_udp;
+    int_report_fixed_header_t report_fixed_header; 
+
+    //Standard Headers
+    ethernet_t   ethernet;
+    ipv4_t       ipv4;
+    tcp_t        tcp;
+    udp_t       udp;
+
+    //INT headers
+    int_shim_t  int_shim;
+    int_header_t int_header;
+
+    //Local INT Node Metadata
+    int_egress_port_tx_util_t int_egress_port_tx_util;
+    int_egress_tstamp_t int_egress_tstamp;
+    int_hop_latency_t int_hop_latency;
+    int_ingress_tstamp_t int_ingress_tstamp;
+    int_port_ids_t int_port_ids;
+    int_level2_port_ids_t int_level2_port_ids;
+    int_q_occupancy_t int_q_occupancy;
+    int_switch_id_t int_switch_id;
+
+    //INT metadata from previous nodes
+    int_data_t int_data; 
+
 }

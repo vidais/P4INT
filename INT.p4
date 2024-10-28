@@ -1,6 +1,7 @@
 /* -*- P4_16 -*- */
 #include <core.p4>
 #include <v1model.p4>
+#include <headers.p4>
 
 const bit<16> TYPE_IPV4 = 0x800;
 
@@ -12,78 +13,6 @@ typedef bit<9>  egressSpec_t;
 typedef bit<48> macAddr_t;
 typedef bit<32> ip4Addr_t;
 
-header ethernet_t {
-    macAddr_t dstAddr;
-    macAddr_t srcAddr;
-    bit<16>   etherType;
-}
-
-header ipv4_t {
-    bit<4>    version;
-    bit<4>    ihl;
-    bit<6>    dscp;
-    bit<2>    ecn;
-    bit<16>   totalLen;
-    bit<16>   identification;
-    bit<3>    flags;
-    bit<13>   fragOffset;
-    bit<8>    ttl;
-    bit<8>    protocol;
-    bit<16>   hdrChecksum;
-    ip4Addr_t srcAddr;
-    ip4Addr_t dstAddr;
-}
-
-struct metadata {
-    bit<
-}
-
-header TCP_t{
-    bit<16> src_port;
-    bit<16> dst_port;
-    bit<32> seq_number;
-    bit<32> ack_number;
-    bit<4> data_offset;
-    bit<3> reserved_tcp;
-    bit<9> control_flags;
-    bit<16> window_size;
-    bit<16> tcp_checksum;
-    bit<16> urgent_ptr;
-}
-
-header INTshim_t{
-    bit<4> type;
-    bit<2> shim_zero;
-    bit<2> r_flag;  //WHAT IS THIS??
-    bit<8> len;
-    bit<8> reserved;
-    bit<6> dscp;
-    bit<2> r_flag_two; //SAME QUESTION
-
-}
-
-header INT_t{
-    bit<4> control_version;
-    bit<1> discard;
-    bit<1> max_hop_exceeded;
-    bit<1> mtu_exceeded;
-    bit<12> reserved;
-    bit<5> hop_ml;
-    bit<8> remaining_hop_count;
-    bit<16> instruction;
-    bit<32> node_id;
-    bit<32> queue_occup;
-}
-
-
-struct headers {
-    ethernet_t   ethernet;
-    ipv4_t       ipv4;
-    TCP_t        tcp;
-    INT_t        p4int;
-    INTshim_t    p4int_shim;
-
-}
 
 /*************************************************************************
 *********************** P A R S E R  ***********************************
