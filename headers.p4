@@ -66,7 +66,7 @@ const bit<16> INT_SHIM_HEADER_LEN_BYTES = 4;
 const bit<8> INT_TYPE_HOP_BY_HOP = 1;
 
 //INT Shim Header
-header int_shim_t {
+header intl4_shim_t {
     bit<8> int_type;
     bit<8> rsvd1;
     bit<8> len;    // the length of all INT headers in 4-byte words
@@ -90,6 +90,31 @@ header int_header_t {
     bit<8>  remaining_hop_cnt;  // how many switches can still add INT metadata
     bit<16> instruction_mask;
     bit<16> seq;  // rsvd3 - custom implementation of a sequence number
+}
+
+//Metadata
+struct int_metadata_t {
+    bit<1>  source;    // is INT source functionality enabled
+    bit<1>  sink;        // is INT sink functionality enabled
+    bit<32> switch_id;  // INT switch id is configured by network controller
+    bit<16> insert_byte_cnt;  // counter of inserted INT bytes
+    bit<8>  int_hdr_word_len;  // counter of inserted INT words
+    bit<1>  remove_int;           // indicator that all INT headers and data must be removed at egress for the processed packet 
+    bit<16> sink_reporting_port;    // on which port INT reports must be send to INT collector
+    bit<64> ingress_tstamp;   // pass ingress timestamp from Ingress pipeline to Egress pipeline
+    bit<16> ingress_port;  // pass ingress port from Ingress pipeline to Egress pipeline 
+}
+
+//Metadata for layers 3 and 4
+struct layer34_metadata_t {
+    bit<32> ip_src;
+    bit<32> ip_dst;
+    bit<8>  ip_ver;
+    bit<16> l4_src;
+    bit<16> l4_dst;
+    bit<8>  l4_proto;
+    bit<16> l3_mtu;
+    bit<6>  dscp;
 }
 
 const bit<16> INT_ALL_HEADER_LEN_BYTES = INT_SHIM_HEADER_LEN_BYTES + INT_HEADER_LEN_BYTES;
@@ -157,18 +182,7 @@ header int_report_fixed_header_t {
     bit<32> ingress_tstamp;
 }
 
-//Metadata
-struct int_metadata_t {
-    bit<1>  source;    // is INT source functionality enabled
-    bit<1>  sink;        // is INT sink functionality enabled
-    bit<32> switch_id;  // INT switch id is configured by network controller
-    bit<16> insert_byte_cnt;  // counter of inserted INT bytes
-    bit<8>  int_hdr_word_len;  // counter of inserted INT words
-    bit<1>  remove_int;           // indicator that all INT headers and data must be removed at egress for the processed packet 
-    bit<16> sink_reporting_port;    // on which port INT reports must be send to INT collector
-    bit<64> ingress_tstamp;   // pass ingress timestamp from Ingress pipeline to Egress pipeline
-    bit<16> ingress_port;  // pass ingress port from Ingress pipeline to Egress pipeline 
-}
+
 
 //Variable header for the values of the previous nodes
 header int_data_t {
@@ -176,6 +190,11 @@ header int_data_t {
     varbit<1600> data;
 }
 
+struct metadata{
+    int_metadata_t int_metadata;
+    int_shim_t int_shim;
+    layer34_metadata_t layer34_metadata;
+}
 
 struct headers {
     //INT Report Headers
@@ -191,7 +210,7 @@ struct headers {
     udp_t       udp;
 
     //INT headers
-    int_shim_t  int_shim;
+    intl4_shim_t  int_shim;
     int_header_t int_header;
 
     //Local INT Node Metadata
@@ -208,3 +227,5 @@ struct headers {
     int_data_t int_data; 
 
 }
+
+#endif
