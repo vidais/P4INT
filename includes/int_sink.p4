@@ -48,7 +48,6 @@ control Int_sink_config(inout headers hdr, inout metadata meta, inout standard_m
     }
 }
 
-#ifdef BMV2
 control Int_sink(inout headers hdr, inout metadata meta, inout standard_metadata_t standard_metadata) {
 
     action remove_sink_header() {

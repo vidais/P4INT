@@ -60,7 +60,7 @@ parser ParserImpl(packet_in packet, out headers hdr, inout metadata meta, inout 
         }
     }
     state parse_udp {
-        packet.extract(hdr.udp);
+	packet.extract(hdr.udp);
         meta.layer34_metadata.l4_src = hdr.udp.srcPort;
         meta.layer34_metadata.l4_dst = hdr.udp.dstPort;
         meta.layer34_metadata.l4_proto = 8w0x11;
@@ -195,12 +195,11 @@ control computeChecksum(inout headers hdr, inout metadata meta) {
     }
 }
 
-*********************  I N G R E S S   D E P A R S E R  ************************/
+/*********************  I N G R E S S   D E P A R S E R  ************************/
 
 control IngressDeparser(packet_out packet,
     inout headers hdr,
-    in metadata meta,
-    in ingress_intrinsic_metadata_for_deparser_t ig_dprsr_md) {
+    in metadata meta) {
 
     Checksum() ipv4_csum;
     Mirror() mirror;
@@ -265,9 +264,7 @@ control IngressDeparser(packet_out packet,
 control EgressDeparser(packet_out packet,
                                     /* User */
                                     inout headers                       hdr,
-                                    in    metadata                      meta,
-                                    /* Intrinsic */
-                                    in    egress_intrinsic_metadata_for_deparser_t  eg_dprsr_md) {
+                                    in    metadata                      meta) {
     
     Checksum() ipv4_csum;
     apply {
@@ -342,4 +339,3 @@ control EgressDeparser(packet_out packet,
         packet.emit(hdr.int_data);
 	}
     }
-#endif

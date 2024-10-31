@@ -192,7 +192,7 @@ header int_data_t {
 
 struct metadata{
     int_metadata_t int_metadata;
-    int_shim_t int_shim;
+    intl4_shim_t int_shim;
     layer34_metadata_t layer34_metadata;
 }
 

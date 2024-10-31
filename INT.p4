@@ -1,7 +1,14 @@
 /* -*- P4_16 -*- */
 #include <core.p4>
 #include <v1model.p4>
-#include <headers.p4>
+#include "includes/headers.p4"
+#include "includes/forward.p4"
+#include "includes/int_report.p4"
+#include "includes/int_sink.p4"
+#include "includes/int_source.p4"
+#include "includes/int_transit.p4"
+#include "includes/parser.p4"
+#include "includes/port_forward.p4"
 
 const bit<16> TYPE_IPV4 = 0x800;
 
